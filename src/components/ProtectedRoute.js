@@ -3,7 +3,6 @@ import { useAuth } from "../context/authContext";
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
-
   if (!user) {
     return null;
   }

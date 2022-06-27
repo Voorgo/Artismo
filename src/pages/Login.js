@@ -5,6 +5,7 @@ import { useAuth } from "../context/authContext";
 const Login = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const { login } = useAuth();
 
   const handleEmail = (e) => {
@@ -17,10 +18,11 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
     try {
       await login(email, password);
     } catch (e) {
-      console.log(e);
+      setError(e.message);
     }
   };
 
@@ -36,6 +38,11 @@ const Login = () => {
       <div className="flex gap-4 flex-col max-w-lg w-full md:w-[45%] ">
         <div className="flex flex-col  xs:bg-white xs:px-8 xs:pb-10 xs:border xs:border-gray-primary xs:mb-4 xs:rounded">
           <h1 className="font-nosfier text-5xl text-center my-10">Artismo</h1>
+          {error ? (
+            <div className="text-center text-xl border border-red-500 py-3 mb-5 bg-red-500 text-white font-bold">
+              {error}
+            </div>
+          ) : null}
           <form className="flex flex-col gap-6" onSubmit={handleLogin}>
             <label className="relative w-full h-[42px] flex ">
               <span

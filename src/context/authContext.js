@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
 
   function login(email, password) {
     setPersistence(auth, browserSessionPersistence);
-    signInWithEmailAndPassword(auth, email, password);
+    return signInWithEmailAndPassword(auth, email, password);
   }
 
   function logOut() {

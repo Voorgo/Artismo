@@ -5,7 +5,7 @@ const Header = () => {
   const { user, logOut } = useAuth();
   return (
     <header>
-      <nav className="bg-white w-full border-b border-[rgb(219, 219, 219)] fixed">
+      <nav className="bg-white w-full border-b border-[rgb(219, 219, 219)] fixed z-20">
         <div className="container flex max-w-[950px] mx-auto justify-between text-2xl h-[60px] items-center px-8">
           <div>
             <h1 className="font-nosfier text-4xl">Artismo</h1>
