@@ -1,8 +1,21 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/authContext";
+import { useCurrentUser } from "../hooks/getCurrentUser";
+import { db } from "../firebase";
+import { updateDoc, doc, onSnapshot } from "firebase/firestore";
+import { useEffect, useState } from "react";
 
 const Header = () => {
   const { user, logOut } = useAuth();
+  const [currentuser] = useCurrentUser(user);
+  // const [currUser, setCurr] = useState();
+  // useEffect(() => {
+  //   onSnapshot(doc(db, "users", `${user?.email}`), (doc) => {
+  //     setCurr(doc.data());
+  //   });
+  //   console.log(currUser);
+  // }, [user?.email]);
+
   return (
     <header>
       <nav className="bg-white w-full border-b border-[rgb(219, 219, 219)] fixed z-20">
@@ -44,7 +57,12 @@ const Header = () => {
                   />
                 </svg>
               </div>
-              <div className="w-[25px] h-[25px] rounded-full bg-black"></div>
+              <Link to={`/profile/${currentuser?.username}`}>
+                <img
+                  src={"images/pexels-vietnam-photographer-11293719.jpg"}
+                  className="w-12 h-12  rounded-full"
+                />
+              </Link>
             </div>
           ) : (
             <div className="flex gap-5">

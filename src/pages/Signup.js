@@ -30,6 +30,7 @@ const Signup = () => {
     e.preventDefault();
     try {
       await signUp(email, password, name, username);
+
       navigate("/");
     } catch (e) {
       console.log(e);
