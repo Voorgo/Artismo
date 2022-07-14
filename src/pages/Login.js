@@ -33,7 +33,10 @@ const Login = () => {
   return (
     <div className="container mx-auto flex items-center max-w-screen-md h-screen justify-center p-5">
       <div className="w-2/4 hidden md:flex">
-        <img src={"/images/iphone-with-app.jpg"} alt="app preview on phone" />
+        <img
+          src={require("../images/iphone-with-app.jpg")}
+          alt="app preview on phone"
+        />
       </div>
       <div className="flex gap-4 flex-col max-w-lg w-full md:w-[45%] ">
         <div className="flex flex-col  xs:bg-white xs:px-8 xs:pb-10 xs:border xs:border-gray-primary xs:mb-4 xs:rounded">

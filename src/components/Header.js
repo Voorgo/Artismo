@@ -1,31 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { useCurrentUser } from "../hooks/getCurrentUser";
-import { db } from "../firebase";
-import { updateDoc, doc, onSnapshot } from "firebase/firestore";
-import { useEffect, useState } from "react";
 
 const Header = () => {
   const { user, logOut } = useAuth();
-  const [currentuser] = useCurrentUser(user);
-  // const [currUser, setCurr] = useState();
-  // useEffect(() => {
-  //   onSnapshot(doc(db, "users", `${user?.email}`), (doc) => {
-  //     setCurr(doc.data());
-  //   });
-  //   console.log(currUser);
-  // }, [user?.email]);
+  const [currentUser] = useCurrentUser(user);
+  const navigate = useNavigate();
 
   return (
     <header>
-      <nav className="bg-white w-full border-b border-[rgb(219, 219, 219)] fixed z-20">
-        <div className="container flex max-w-[950px] mx-auto justify-between text-2xl h-[60px] items-center px-8">
-          <div>
-            <h1 className="font-nosfier text-4xl">Artismo</h1>
+      <div className="basis-[60px]"></div>
+      <nav className="bg-white w-full border-b border-[rgb(219, 219, 219)] fixed top-0 left-0 z-20">
+        <div className="container flex max-w-[950px] mx-auto justify-center text-2xl h-[60px] items-center px-8">
+          <div className="mr-[20px]">
+            <h1
+              className="font-nosfier text-4xl cursor-pointer"
+              onClick={() => navigate("/")}
+            >
+              Artismo
+            </h1>
           </div>
           {user?.email ? (
-            <div className="flex items-center justify-center gap-8">
-              <div>
+            <div className="flex items-center justify-end gap-8 grow ">
+              <div onClick={() => navigate("/")}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-10 w-10 cursor-pointer"
@@ -57,10 +54,10 @@ const Header = () => {
                   />
                 </svg>
               </div>
-              <Link to={`/profile/${currentuser?.username}`}>
+              <Link to={`/profile/${currentUser?.username}`}>
                 <img
-                  src={"images/pexels-vietnam-photographer-11293719.jpg"}
-                  className="w-12 h-12  rounded-full"
+                  src={require("../images/avatar.jpg")}
+                  className="w-12 h-12  rounded-full object-cover max-w-none"
                 />
               </Link>
             </div>
