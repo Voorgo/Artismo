@@ -1,54 +1,43 @@
-import { useEffect, useState } from "react";
 import PostCard from "./post";
-const fakeUser = [
-  {
-    name: "Angel Mikail",
-    img: "images/pexels-adrianna-l-12263516.jpg",
-    likes: 5,
-    comments: ["Nice one", "Good looking", "Superb", "Best of the best"],
-  },
-  {
-    name: "Alex Nom",
-    img: "images/pexels-svitlana-myslyvets-12441516.jpg",
-    likes: 10,
-    comments: ["Good Job", "Fire", "Thumbs up"],
-  },
-  {
-    name: "Not Dam",
-    img: "images/pexels-poyee-tsang-12139755.jpg",
-    likes: 5,
-    comments: ["Nice one", "Good looking", "Superb", "Best of the best"],
-  },
-  {
-    name: "Andrei Iss",
-    img: "images/pexels-svitlana-myslyvets-12441516.jpg",
-    likes: 2,
-    comments: ["Nice one", "Good looking", "Superb", "Best of the best"],
-  },
-  {
-    name: "Top Dooo",
-    img: "images/pexels-adrianna-l-12263516.jpg",
-    likes: 5,
-    comments: ["Nice one", "Good looking", "Superb", "Best of the best"],
-  },
-];
+import { db } from "../firebase";
+import { useState, useEffect } from "react";
+import {
+  updateDoc,
+  doc,
+  onSnapshot,
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { useAuth } from "../context/authContext";
 
 const Main = () => {
-  const [IsLoading, setIsLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const { user } = useAuth();
+
+  const collectionRef = query(
+    collection(db, "users"),
+    where("emailAddress", "!=", user?.email)
+  );
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-  });
+    getDocs(collectionRef).then((snapshot) => {
+      let users = [];
+      snapshot.forEach((doc) => {
+        users.push({ ...doc.data() });
+      });
+      setUsers(users);
+    });
+  }, [user]);
+
   return (
     <main>
       <section className="max-w-screen-xs  mx-auto  flex-col ">
         <div className="h-[60px] w-full"></div>
-        {fakeUser.map((user) => (
-          <PostCard fakeUser={user} loading={IsLoading} />
+        {users.map((user) => (
+          <PostCard user={user} key={user.id} />
         ))}
-        <div></div>
       </section>
     </main>
   );
