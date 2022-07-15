@@ -1,15 +1,16 @@
-import { useContext, createContext, useState, useEffect } from "react";
 import {
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
   onAuthStateChanged,
   setPersistence,
-  browserSessionPersistence,
+  signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
-import { auth, db } from "../firebase";
-import { setDoc, doc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { v4 } from "uuid";
+import { auth, db } from "../firebase";
 
 const AuthContext = createContext();
 
@@ -21,13 +22,16 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState();
   const navigate = useNavigate();
 
-  function signUp(email, password, name, username) {
-    createUserWithEmailAndPassword(auth, email, password);
+  function signUp(email, password, name, username, setError) {
+    createUserWithEmailAndPassword(auth, email, password)
+      .then(() => navigate("/"))
+      .catch((e) => setError(e.message));
     setDoc(doc(db, "users", email), {
       name,
       username: username.toLowerCase(),
       emailAddress: email.toLocaleLowerCase(),
       dateCreate: Date.now(),
+      id: v4(),
     });
   }
 
