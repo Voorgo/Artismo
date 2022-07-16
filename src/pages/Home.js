@@ -1,11 +1,11 @@
 import Header from "../components/Header";
-import Main from "../components/Main";
+import Timeline from "../components/Timeline";
 
 const Home = () => {
   return (
     <section className="min-h-screen">
       <Header />
-      <Main />
+      <Timeline />
     </section>
   );
 };
