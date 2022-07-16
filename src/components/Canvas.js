@@ -5,10 +5,11 @@ const Canvas = ({ color }) => {
   const firstRender = useRef(true);
 
   useEffect(() => {
-    console.log(color);
     if (firstRender.current) {
       const canvas = c.current;
       const ctx = canvas.getContext("2d");
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       const maxLevel = Math.floor(Math.random() * 2 + 3);
       const branches = Math.floor(Math.random() * 2 + 2);
@@ -54,14 +55,7 @@ const Canvas = ({ color }) => {
       firstRender.current = false;
     }
   }, [color]);
-  return (
-    <canvas
-      ref={c}
-      width="418"
-      height="418"
-      className="w-full bg-black"
-    ></canvas>
-  );
+  return <canvas ref={c} width="418" height="418" className="w-full"></canvas>;
 };
 
 export default Canvas;
