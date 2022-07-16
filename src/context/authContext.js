@@ -24,15 +24,17 @@ export function AuthProvider({ children }) {
 
   function signUp(email, password, name, username, setError) {
     createUserWithEmailAndPassword(auth, email, password)
-      .then(() => navigate("/"))
+      .then(() => {
+        setDoc(doc(db, "users", email), {
+          name,
+          username: username.toLowerCase(),
+          emailAddress: email.toLocaleLowerCase(),
+          dateCreated: Date.now(),
+          id: v4(),
+        });
+        navigate("/");
+      })
       .catch((e) => setError(e.message));
-    setDoc(doc(db, "users", email), {
-      name,
-      username: username.toLowerCase(),
-      emailAddress: email.toLocaleLowerCase(),
-      dateCreate: Date.now(),
-      id: v4(),
-    });
   }
 
   function login(email, password) {
