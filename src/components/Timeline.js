@@ -11,8 +11,7 @@ const Timeline = () => {
   const collectionRef = query(
     collection(db, "users"),
     where("emailAddress", "!=", user?.email),
-    orderBy("emailAddress"),
-    orderBy("dateCreated", "desc")
+    orderBy("emailAddress")
   );
 
   useEffect(() => {
