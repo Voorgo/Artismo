@@ -5,12 +5,14 @@ import Header from "../components/Header";
 import NoUserFound from "../components/NoUserFound";
 import { useAuth } from "../context/authContext";
 import { db } from "../firebase";
+import GenerateArtModal from "../components/GenerateArtModal";
 
 const Profile = () => {
   const { user } = useAuth();
   const [userProfile, setUserProfile] = useState({});
   const params = useParams();
   const [loading, setIsLoading] = useState(true);
+  const [visible, setVisible] = useState(false);
 
   const userRef = query(
     collection(db, "users"),
@@ -64,9 +66,41 @@ const Profile = () => {
           ) : (
             <NoUserFound />
           )}
+          {user?.email === userProfile.emailAddress && user?.email ? (
+            <div className="w-full flex justify-center pb-4">
+              <button
+                onClick={() => setVisible(true)}
+                className="w-52 font-semibold bg-blue-500 text-white py-3 rounded-xl text-3xl flex justify-center gap-2 items-center  active:bg-blue-400"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-9 w-9"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                    clipRule="evenodd"
+                  />
+                </svg>{" "}
+                Create art
+              </button>
+              <GenerateArtModal visible={visible} setVisible={setVisible} />
+            </div>
+          ) : null}
         </section>
         <section>
-          <div className="max-w-[950px]  border-t h-[60px] "></div>
+          <div className="max-w-[950px]  border-t">
+            <div
+              className={`w-full grid grid-cols-3 gap-10  h-full ${
+                user?.email === userProfile.emailAddress &&
+                userProfile.emailAddress
+                  ? 'empty:before:content-["Start_sharing_your_art"]'
+                  : 'empty:before:content-["No_art"]'
+              } empty:before:block empty:before:text-center empty:before:col-span-3 empty:before:text-3xl empty:before:self-center empty:before:font-semibold pt-8`}
+            ></div>
+          </div>
         </section>
       </main>
     </section>
