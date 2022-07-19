@@ -6,6 +6,7 @@ import NoUserFound from "../components/NoUserFound";
 import { useAuth } from "../context/authContext";
 import { db } from "../firebase";
 import GenerateArtModal from "../components/GenerateArtModal";
+import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -13,6 +14,11 @@ const Profile = () => {
   const params = useParams();
   const [loading, setIsLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [URLS, setURLS] = useState([]);
+  const storage = getStorage();
+  const listRef = ref(storage, `${params.username}`);
+  // const starsRef = ref(storage, 'images/stars.jpg');
 
   const userRef = query(
     collection(db, "users"),
@@ -23,6 +29,19 @@ const Profile = () => {
       snapshot.forEach((doc) => setUserProfile({ ...doc.data() }));
       setIsLoading(false);
     });
+
+    listAll(listRef)
+      .then((res) => {
+        res.items.forEach((itemRef) => {
+          getDownloadURL(ref(storage, itemRef)).then((url) => {
+            setPosts((prev) => [...prev, url]);
+          });
+        });
+      })
+      .catch((error) => {
+        // Uh-oh, an error occurred!
+      });
+    console.log(URLS);
   }, [params]);
 
   if (loading) return null;
@@ -86,7 +105,11 @@ const Profile = () => {
                 </svg>{" "}
                 Create art
               </button>
-              <GenerateArtModal visible={visible} setVisible={setVisible} />
+              <GenerateArtModal
+                visible={visible}
+                setVisible={setVisible}
+                username={userProfile.username}
+              />
             </div>
           ) : null}
         </section>
@@ -99,7 +122,11 @@ const Profile = () => {
                   ? 'empty:before:content-["Start_sharing_your_art"]'
                   : 'empty:before:content-["No_art"]'
               } empty:before:block empty:before:text-center empty:before:col-span-3 empty:before:text-3xl empty:before:self-center empty:before:font-semibold pt-8`}
-            ></div>
+            >
+              {posts.map((post) => (
+                <img src={post} />
+              ))}
+            </div>
           </div>
         </section>
       </main>
