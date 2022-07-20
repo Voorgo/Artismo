@@ -3,7 +3,7 @@ import randomizeCanvas from "../utils/randomizeCanvas";
 import { getStorage, ref, uploadString } from "firebase/storage";
 import { v4 } from "uuid";
 
-const GenerateArtModal = ({ visible, setVisible, username }) => {
+const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
   const [color, setColor] = useState("");
   const canvasRef = useRef(null);
   const [currentData, setCurrentData] = useState("");
@@ -103,6 +103,8 @@ const GenerateArtModal = ({ visible, setVisible, username }) => {
                     (snapshot) => {
                       setConfirmation(true);
                       setTimeout(() => setConfirmation(false), 2000);
+                      addPost((prev) => !prev);
+                      randomizeCanvas(color, canvasRef);
                     }
                   );
                 } else {
