@@ -7,6 +7,7 @@ import { useAuth } from "../context/authContext";
 import { db } from "../firebase";
 import GenerateArtModal from "../components/GenerateArtModal";
 import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
+import PostCard from "../components/profile/PostCard";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -14,35 +15,37 @@ const Profile = () => {
   const params = useParams();
   const [loading, setIsLoading] = useState(true);
   const [visible, setVisible] = useState(false);
+  const [addPost, setAddPost] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [URLS, setURLS] = useState([]);
   const storage = getStorage();
   const listRef = ref(storage, `${params.username}`);
-  // const starsRef = ref(storage, 'images/stars.jpg');
 
   const userRef = query(
     collection(db, "users"),
     where("username", "==", params.username)
   );
+
   useEffect(() => {
+    setPosts([]);
     getDocs(userRef).then((snapshot) => {
       snapshot.forEach((doc) => setUserProfile({ ...doc.data() }));
       setIsLoading(false);
     });
 
     listAll(listRef)
-      .then((res) => {
-        res.items.forEach((itemRef) => {
-          getDownloadURL(ref(storage, itemRef)).then((url) => {
-            setPosts((prev) => [...prev, url]);
-          });
-        });
+      .then(async (res) => {
+        const { items } = res;
+        const urls = await Promise.all(
+          items.map((item) => {
+            return getDownloadURL(ref(storage, item));
+          })
+        );
+        setPosts(urls);
       })
       .catch((error) => {
-        // Uh-oh, an error occurred!
+        console.log(error);
       });
-    console.log(URLS);
-  }, [params]);
+  }, [params.username, addPost]);
 
   if (loading) return null;
   return (
@@ -109,6 +112,7 @@ const Profile = () => {
                 visible={visible}
                 setVisible={setVisible}
                 username={userProfile.username}
+                addPost={setAddPost}
               />
             </div>
           ) : null}
@@ -116,16 +120,19 @@ const Profile = () => {
         <section>
           <div className="max-w-[950px]  border-t">
             <div
-              className={`w-full grid grid-cols-3 gap-10  h-full ${
-                user?.email === userProfile.emailAddress &&
-                userProfile.emailAddress
-                  ? 'empty:before:content-["Start_sharing_your_art"]'
-                  : 'empty:before:content-["No_art"]'
-              } empty:before:block empty:before:text-center empty:before:col-span-3 empty:before:text-3xl empty:before:self-center empty:before:font-semibold pt-8`}
+              className={`w-full grid grid-cols-2 gap-5 h-full pt-8 xs:grid-cols-3 md:gap-8`}
             >
-              {posts.map((post) => (
-                <img src={post} />
-              ))}
+              {posts.length < 1 ? (
+                <p className="col-span-3 text-center font-semibold text-4xl">
+                  No posts
+                </p>
+              ) : (
+                <>
+                  {posts.map((post, i) => (
+                    <PostCard post={post} key={i} />
+                  ))}
+                </>
+              )}
             </div>
           </div>
         </section>
