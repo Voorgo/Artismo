@@ -32,6 +32,11 @@ export function AuthProvider({ children }) {
           dateCreated: Date.now(),
           id: v4(),
         });
+        setDoc(doc(db, "posts", username), {
+          imageSrcAndLikes: [],
+          username,
+          email,
+        });
         navigate("/");
       })
       .catch((e) => setError(e.message));
