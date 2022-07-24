@@ -9,9 +9,9 @@ const Timeline = () => {
   const { user } = useAuth();
 
   const collectionRef = query(
-    collection(db, "users"),
-    where("emailAddress", "!=", user?.email),
-    orderBy("emailAddress")
+    collection(db, "posts"),
+    where("email", "!=", user?.email),
+    orderBy("email")
   );
 
   useEffect(() => {
@@ -29,9 +29,11 @@ const Timeline = () => {
     <main>
       <section className="max-w-screen-xs  mx-auto  flex-col ">
         <div className="h-[60px] w-full"></div>
-        {users.map((user) => (
-          <PostCard user={user} key={user.id} />
-        ))}
+        {users.map((user, i) =>
+          user.imageSrcAndLikes.length > 0 ? (
+            <PostCard user={user} key={i} />
+          ) : null
+        )}
       </section>
     </main>
   );
