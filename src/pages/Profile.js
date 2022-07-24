@@ -1,13 +1,12 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import GenerateArtModal from "../components/GenerateArtModal";
 import Header from "../components/Header";
 import NoUserFound from "../components/NoUserFound";
+import ImageCard from "../components/profile/ImageCard";
 import { useAuth } from "../context/authContext";
-import { db } from "../firebase";
-import GenerateArtModal from "../components/GenerateArtModal";
-import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
-import PostCard from "../components/profile/PostCard";
+
+import { getUserProfile, getUserPosts } from "../utils/getUser";
 
 const Profile = () => {
   const { user } = useAuth();
@@ -17,35 +16,12 @@ const Profile = () => {
   const [visible, setVisible] = useState(false);
   const [addPost, setAddPost] = useState(false);
   const [posts, setPosts] = useState([]);
-  const storage = getStorage();
-  const listRef = ref(storage, `${params.username}`);
-
-  const userRef = query(
-    collection(db, "users"),
-    where("username", "==", params.username)
-  );
 
   useEffect(() => {
     setPosts([]);
-    getDocs(userRef).then((snapshot) => {
-      snapshot.forEach((doc) => setUserProfile({ ...doc.data() }));
-      setIsLoading(false);
-    });
-
-    listAll(listRef)
-      .then(async (res) => {
-        const { items } = res;
-        const urls = await Promise.all(
-          items.map((item) => {
-            return getDownloadURL(ref(storage, item));
-          })
-        );
-        setPosts(urls);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [params.username, addPost]);
+    getUserProfile(params.username, setUserProfile, setIsLoading);
+    getUserPosts(params.username, setPosts);
+  }, [params.username, addPost, user?.email]);
 
   if (loading) return null;
   return (
@@ -77,7 +53,8 @@ const Profile = () => {
                 <h2 className="text-5xl font-thin ">{userProfile?.username}</h2>
                 <div>
                   <span className="font-bold text-2xl">
-                    {0} <span className="font-normal">arts</span>
+                    {posts?.length}
+                    <span className="font-normal"> arts</span>
                   </span>
                 </div>
                 <div className="text-2xl font-bold">
@@ -105,7 +82,7 @@ const Profile = () => {
                     d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
                     clipRule="evenodd"
                   />
-                </svg>{" "}
+                </svg>
                 Create art
               </button>
               <GenerateArtModal
@@ -122,14 +99,21 @@ const Profile = () => {
             <div
               className={`w-full grid grid-cols-2 gap-5 h-full pt-8 xs:grid-cols-3 md:gap-8`}
             >
-              {posts.length < 1 ? (
+              {posts?.length < 1 ? (
                 <p className="col-span-3 text-center font-semibold text-4xl">
                   No posts
                 </p>
               ) : (
                 <>
-                  {posts.map((post, i) => (
-                    <PostCard post={post} key={i} />
+                  {posts?.map((post, i) => (
+                    <ImageCard
+                      post={post}
+                      key={i}
+                      render={setAddPost}
+                      user={user}
+                      userProfile={userProfile}
+                      posts={posts}
+                    />
                   ))}
                 </>
               )}
