@@ -1,7 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import randomizeCanvas from "../utils/randomizeCanvas";
-import { getStorage, ref, uploadString } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  uploadString,
+  getDownloadURL,
+} from "firebase/storage";
 import { v4 } from "uuid";
+import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { db } from "../firebase";
 
 const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
   const [color, setColor] = useState("");
@@ -11,6 +18,7 @@ const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
   const [confirmation, setConfirmation] = useState(false);
   const storage = getStorage();
   const storageRef = ref(storage, `${username}/${v4()}`);
+  const userPost = doc(db, "posts", `${username}`);
   const closeModal = (e) => {
     if (
       e.target.id === "container" ||
@@ -23,6 +31,13 @@ const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
       setCurrentData("");
       setStatus("Please press generate, for image.");
     }
+  };
+
+  const setPost = (url, path) => {
+    const data = {
+      imageSrcAndLikes: arrayUnion({ src: url, likes: [], path }),
+    };
+    updateDoc(userPost, data);
   };
 
   if (!visible) return null;
@@ -101,10 +116,14 @@ const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
                 if (currentData) {
                   uploadString(storageRef, currentData, "data_url").then(
                     (snapshot) => {
+                      getDownloadURL(snapshot.ref).then((url) =>
+                        setPost(url, snapshot.ref?.fullPath)
+                      );
                       setConfirmation(true);
                       setTimeout(() => setConfirmation(false), 2000);
                       addPost((prev) => !prev);
                       randomizeCanvas(color, canvasRef);
+                      setCurrentData(canvasRef.current.toDataURL());
                     }
                   );
                 } else {
