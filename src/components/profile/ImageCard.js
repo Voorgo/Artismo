@@ -1,16 +1,8 @@
-import { getStorage, ref, deleteObject } from "firebase/storage";
 import { useState } from "react";
+import deletePost from "../../utils/deletePost";
 
-const ImageCard = ({ post, fileRef, deletePost, user, userProfile }) => {
-  const storage = getStorage();
-  const imageRef = ref(storage, fileRef);
+const ImageCard = ({ post, render, user, userProfile, posts }) => {
   const [visible, setVisible] = useState(false);
-
-  const deleteImage = () => {
-    deleteObject(imageRef)
-      .then(() => deletePost((prev) => !prev))
-      .catch((error) => console.log(error));
-  };
 
   return (
     <>
@@ -29,7 +21,9 @@ const ImageCard = ({ post, fileRef, deletePost, user, userProfile }) => {
               </button>
               <button
                 className="py-3 px-5 text-xl font-semibold text-white bg-red-500 rounded-md active:bg-red-400"
-                onClick={deleteImage}
+                onClick={() =>
+                  deletePost(render, post, userProfile.username, posts)
+                }
               >
                 Yes
               </button>
@@ -39,18 +33,24 @@ const ImageCard = ({ post, fileRef, deletePost, user, userProfile }) => {
       ) : null}
       <div className="relative group">
         <div className="absolute inset-0 hover:bg-[#383838ad] flex justify-center items-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-12 w-12 text-white hidden group-hover:block"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <div className="relative">
+            <div className="absolute -bottom-full bg-white hidden group-hover:block py-1 px-3 w-max rounded-sm text-2xl font-semibold left-1/2 -translate-x-1/2">
+              {post?.likes?.length}{" "}
+              {post?.likes.length === 1 ? "like" : "likes"}
+            </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`h-12 w-12 text-white hidden group-hover:block`}
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
           {user?.email === userProfile.emailAddress ? (
             <div
               className="absolute top-1 right-1 z-50 cursor-pointer hidden group-hover:block"
@@ -71,7 +71,7 @@ const ImageCard = ({ post, fileRef, deletePost, user, userProfile }) => {
             </div>
           ) : null}
         </div>
-        <img src={post} alt="art" className="w-full h-full max-w-none" />
+        <img src={post.src} alt="art" className="w-full h-full max-w-none" />
       </div>
     </>
   );
