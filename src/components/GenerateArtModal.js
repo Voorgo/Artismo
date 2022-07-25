@@ -7,10 +7,10 @@ import {
   getDownloadURL,
 } from "firebase/storage";
 import { v4 } from "uuid";
-import { doc, updateDoc, arrayUnion } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
-const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
+const GenerateArtModal = ({ visible, setVisible, username, email }) => {
   const [color, setColor] = useState("");
   const canvasRef = useRef(null);
   const [currentData, setCurrentData] = useState("");
@@ -18,7 +18,6 @@ const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
   const [confirmation, setConfirmation] = useState(false);
   const storage = getStorage();
   const storageRef = ref(storage, `${username}/${v4()}`);
-  const userPost = doc(db, "posts", `${username}`);
   const closeModal = (e) => {
     if (
       e.target.id === "container" ||
@@ -34,10 +33,17 @@ const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
   };
 
   const setPost = (url, path) => {
-    const data = {
-      imageSrcAndLikes: arrayUnion({ src: url, likes: [], path }),
-    };
-    updateDoc(userPost, data);
+    const id = v4();
+    const userPost = doc(db, "posts", `${id}`);
+    setDoc(userPost, {
+      username,
+      src: url,
+      likes: [],
+      path,
+      email,
+      id,
+      created: Date.now(),
+    });
   };
 
   if (!visible) return null;
@@ -121,7 +127,6 @@ const GenerateArtModal = ({ visible, setVisible, username, addPost }) => {
                       );
                       setConfirmation(true);
                       setTimeout(() => setConfirmation(false), 2000);
-                      addPost((prev) => !prev);
                       randomizeCanvas(color, canvasRef);
                       setCurrentData(canvasRef.current.toDataURL());
                     }
