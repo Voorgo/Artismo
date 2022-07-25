@@ -1,9 +1,9 @@
 import { useState } from "react";
 import deletePost from "../../utils/deletePost";
+import SmoothImage from "../post/SmoothImage";
 
-const ImageCard = ({ post, render, user, userProfile, posts }) => {
+const ImageCard = ({ post, user, userProfile }) => {
   const [visible, setVisible] = useState(false);
-
   return (
     <>
       {visible ? (
@@ -21,9 +21,7 @@ const ImageCard = ({ post, render, user, userProfile, posts }) => {
               </button>
               <button
                 className="py-3 px-5 text-xl font-semibold text-white bg-red-500 rounded-md active:bg-red-400"
-                onClick={() =>
-                  deletePost(render, post, userProfile.username, posts)
-                }
+                onClick={() => deletePost(post)}
               >
                 Yes
               </button>
@@ -32,12 +30,8 @@ const ImageCard = ({ post, render, user, userProfile, posts }) => {
         </div>
       ) : null}
       <div className="relative group">
-        <div className="absolute inset-0 hover:bg-[#383838ad] flex justify-center items-center">
+        <div className="absolute inset-0 hover:bg-[#383838ad] flex justify-center z-10 items-center">
           <div className="relative">
-            <div className="absolute -bottom-full bg-white hidden group-hover:block py-1 px-3 w-max rounded-sm text-2xl font-semibold left-1/2 -translate-x-1/2">
-              {post?.likes?.length}{" "}
-              {post?.likes.length === 1 ? "like" : "likes"}
-            </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className={`h-12 w-12 text-white hidden group-hover:block`}
@@ -50,6 +44,9 @@ const ImageCard = ({ post, render, user, userProfile, posts }) => {
                 clipRule="evenodd"
               />
             </svg>
+            <div className="absolute -right-1/2 top-1/2 -translate-y-1/2 hidden group-hover:block text-white w-max rounded-sm text-3xl font-semibold">
+              {post.likes?.length}
+            </div>
           </div>
           {user?.email === userProfile.emailAddress ? (
             <div
@@ -71,7 +68,7 @@ const ImageCard = ({ post, render, user, userProfile, posts }) => {
             </div>
           ) : null}
         </div>
-        <img src={post.src} alt="art" className="w-full h-full max-w-none" />
+        <SmoothImage src={post.src} />
       </div>
     </>
   );
