@@ -14,14 +14,13 @@ const Profile = () => {
   const params = useParams();
   const [loading, setIsLoading] = useState(true);
   const [visible, setVisible] = useState(false);
-  const [addPost, setAddPost] = useState(false);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
     setPosts([]);
     getUserProfile(params.username, setUserProfile, setIsLoading);
     getUserPosts(params.username, setPosts);
-  }, [params.username, addPost, user?.email]);
+  }, [params.username, user?.email]);
 
   if (loading) return null;
   return (
@@ -53,7 +52,7 @@ const Profile = () => {
                 <h2 className="text-5xl font-thin ">{userProfile?.username}</h2>
                 <div>
                   <span className="font-bold text-2xl">
-                    {posts?.length}
+                    {posts.length}
                     <span className="font-normal"> arts</span>
                   </span>
                 </div>
@@ -89,7 +88,7 @@ const Profile = () => {
                 visible={visible}
                 setVisible={setVisible}
                 username={userProfile.username}
-                addPost={setAddPost}
+                email={user?.email}
               />
             </div>
           ) : null}
@@ -99,17 +98,16 @@ const Profile = () => {
             <div
               className={`w-full grid grid-cols-2 gap-5 h-full pt-8 xs:grid-cols-3 md:gap-8`}
             >
-              {posts?.length < 1 ? (
+              {posts.length < 1 ? (
                 <p className="col-span-3 text-center font-semibold text-4xl">
                   No posts
                 </p>
               ) : (
                 <>
-                  {posts?.map((post, i) => (
+                  {posts.map((post, i) => (
                     <ImageCard
                       post={post}
-                      key={i}
-                      render={setAddPost}
+                      key={post.id}
                       user={user}
                       userProfile={userProfile}
                       posts={posts}

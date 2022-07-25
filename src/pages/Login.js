@@ -20,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     setError("");
     try {
-      await login(email, password);
+      await login(email, password, setError);
     } catch (e) {
       setError(e.message);
     }
