@@ -4,7 +4,6 @@ import {
   query,
   where,
   onSnapshot,
-  doc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 
@@ -20,8 +19,16 @@ export const getUserProfile = (username, setUserProfile, setIsLoading) => {
   });
 };
 
-export const getUserPosts = (username, setPosts) => {
-  onSnapshot(doc(db, "posts", `${username}`), (doc) => {
-    setPosts(doc.data()?.imageSrcAndLikes);
+export const getUserPosts = async (username, setPosts) => {
+  const userRef = query(
+    collection(db, "posts"),
+    where("username", "==", username)
+  );
+
+  onSnapshot(userRef, (docs) => {
+    let posts = [];
+    docs.forEach((doc) => posts.push(doc.data()));
+    posts.sort((a, b) => b.created - a.created);
+    setPosts(posts);
   });
 };

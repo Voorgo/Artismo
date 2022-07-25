@@ -1,5 +1,5 @@
 import {
-  browserSessionPersistence,
+  browserLocalPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   setPersistence,
@@ -11,6 +11,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { v4 } from "uuid";
 import { auth, db } from "../firebase";
+import { updateProfile } from "firebase/auth";
 
 const AuthContext = createContext();
 
@@ -23,8 +24,12 @@ export function AuthProvider({ children }) {
   const navigate = useNavigate();
 
   function signUp(email, password, name, username, setError) {
+    setPersistence(auth, browserLocalPersistence);
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
+        updateProfile(auth.currentUser, {
+          displayName: username,
+        });
         setDoc(doc(db, "users", email), {
           name,
           username: username.toLowerCase(),
@@ -32,19 +37,17 @@ export function AuthProvider({ children }) {
           dateCreated: Date.now(),
           id: v4(),
         });
-        setDoc(doc(db, "posts", username), {
-          imageSrcAndLikes: [],
-          username,
-          email,
-        });
         navigate("/");
       })
       .catch((e) => setError(e.message));
   }
 
-  function login(email, password) {
-    setPersistence(auth, browserSessionPersistence);
-    return signInWithEmailAndPassword(auth, email, password);
+  function login(email, password, setError) {
+    signInWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((e) => setError(e.message));
   }
 
   function logOut() {
@@ -56,7 +59,6 @@ export function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
-        navigate("/");
       } else {
         setUser({});
       }
