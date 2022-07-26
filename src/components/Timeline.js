@@ -32,7 +32,7 @@ const Timeline = () => {
 
   return (
     <main>
-      <section className="max-w-screen-xs  mx-auto  flex-col ">
+      <section className="max-w-screen-xs  mx-auto flex flex-col pb-10">
         <div className="h-[60px] w-full"></div>
         {usersPosts.map((post, i) =>
           usersPosts.length > 0 ? <PostCard post={post} key={i} /> : null
