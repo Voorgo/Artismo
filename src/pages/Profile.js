@@ -5,7 +5,7 @@ import Header from "../components/Header";
 import NoUserFound from "../components/NoUserFound";
 import ImageCard from "../components/profile/ImageCard";
 import { useAuth } from "../context/authContext";
-
+import UploadPhotoModal from "../components/profile/UploadPhotoModal";
 import { getUserProfile, getUserPosts } from "../utils/getUser";
 
 const Profile = () => {
@@ -15,6 +15,7 @@ const Profile = () => {
   const [loading, setIsLoading] = useState(true);
   const [visible, setVisible] = useState(false);
   const [posts, setPosts] = useState([]);
+  const [toggleModal, setToggleModal] = useState(false);
 
   useEffect(() => {
     setPosts([]);
@@ -31,21 +32,40 @@ const Profile = () => {
         <section>
           {userProfile.emailAddress ? (
             <div className="flex gap-11 mb-[40px]">
-              <div className="grow">
+              <div className="grow flex flex-col gap-4">
                 {userProfile.emailAddress ? (
-                  <img
-                    src={
-                      user?.email === userProfile.emailAddress
-                        ? require("../images/avatar.jpg")
-                        : require("../images/user.png")
-                    }
-                    className="w-32 h-32 object-cover md:w-60 md:h-60 max-w-none mx-auto"
-                    style={{
-                      clipPath:
-                        "polygon(23% 0, 100% 0, 100% 76%, 75% 100%, 0 100%, 0 23%)",
-                    }}
-                    alt="profile"
-                  />
+                  <>
+                    <img
+                      src={
+                        userProfile.userPhoto
+                          ? userProfile.userPhoto
+                          : require("../images/user.png")
+                      }
+                      className={`w-32 h-32 object-cover md:w-60 md:h-60 max-w-none mx-auto ${
+                        user?.email === userProfile.emailAddress
+                          ? "cursor-pointer"
+                          : null
+                      }`}
+                      style={{
+                        clipPath:
+                          "polygon(23% 0, 100% 0, 100% 76%, 75% 100%, 0 100%, 0 23%)",
+                      }}
+                      alt="profile"
+                      onClick={() =>
+                        user?.email === userProfile.emailAddress
+                          ? setToggleModal(true)
+                          : null
+                      }
+                    />
+                    {user?.email === userProfile.emailAddress && (
+                      <UploadPhotoModal
+                        setToggleModal={setToggleModal}
+                        toggleModal={toggleModal}
+                        id={userProfile.id}
+                        email={user?.email}
+                      />
+                    )}
+                  </>
                 ) : null}
               </div>
               <div className="flex flex-col gap-2 grow-[2]">
@@ -53,7 +73,7 @@ const Profile = () => {
                 <div>
                   <span className="font-bold text-2xl">
                     {posts.length}
-                    <span className="font-normal"> arts</span>
+                    <span className="font-normal"> posts</span>
                   </span>
                 </div>
                 <div className="text-2xl font-bold">

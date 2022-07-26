@@ -56,7 +56,11 @@ const Header = () => {
               </div>
               <Link to={`/profile/${currentUser?.username}`}>
                 <img
-                  src={require("../images/avatar.jpg")}
+                  src={
+                    currentUser?.userPhoto
+                      ? currentUser?.userPhoto
+                      : require("../images/user.png")
+                  }
                   alt="avatar"
                   className="w-12 h-12  rounded-full object-cover max-w-none"
                 />
