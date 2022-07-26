@@ -54,7 +54,7 @@ const Signup = () => {
 
   useEffect(() => {
     document.title = "Sign Up - Artismo";
-  });
+  }, []);
   return (
     <div className="container mx-auto flex items-center max-w-screen-md h-screen justify-center p-5">
       <div className="w-2/4 hidden md:flex">

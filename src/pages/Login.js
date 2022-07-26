@@ -28,7 +28,7 @@ const Login = () => {
 
   useEffect(() => {
     document.title = "Login - Artismo";
-  });
+  }, []);
 
   return (
     <div className="container mx-auto flex items-center max-w-screen-md h-screen justify-center p-5">

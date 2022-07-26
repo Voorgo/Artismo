@@ -7,10 +7,11 @@ const SmoothImage = ({ src }) => {
       <img
         src={src}
         alt="post"
-        className={`transition-[opacity] duration-1000 ${
+        className={`transition-[opacity] duration-1000  w-full h-full ${
           imageLoaded ? "opacity-100" : "opacity-0"
         }`}
         onLoad={() => setImageLoaded(true)}
+        loading="lazy"
       />
       {!imageLoaded && (
         <div className="absolute top-0 left-0 max-w-[418px] max-h-[418px] bg-[#f5f5f5] z-50">

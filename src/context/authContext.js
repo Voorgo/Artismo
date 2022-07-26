@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
     createUserWithEmailAndPassword(auth, email, password)
       .then(() => {
         updateProfile(auth.currentUser, {
-          displayName: username,
+          displayName: username.toLowerCase(),
         });
         setDoc(doc(db, "users", email), {
           name,
@@ -36,6 +36,7 @@ export function AuthProvider({ children }) {
           emailAddress: email.toLocaleLowerCase(),
           dateCreated: Date.now(),
           id: v4(),
+          userPhoto: null,
         });
         navigate("/");
       })

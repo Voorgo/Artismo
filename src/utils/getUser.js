@@ -1,10 +1,4 @@
-import {
-  collection,
-  getDocs,
-  query,
-  where,
-  onSnapshot,
-} from "firebase/firestore";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 
 export const getUserProfile = (username, setUserProfile, setIsLoading) => {
@@ -12,9 +6,8 @@ export const getUserProfile = (username, setUserProfile, setIsLoading) => {
     collection(db, "users"),
     where("username", "==", username)
   );
-
-  getDocs(userRef).then((snapshot) => {
-    snapshot.forEach((doc) => setUserProfile({ ...doc.data() }));
+  onSnapshot(userRef, (docs) => {
+    docs.forEach((doc) => setUserProfile({ ...doc.data() }));
     setIsLoading(false);
   });
 };
