@@ -51,6 +51,14 @@ export function AuthProvider({ children }) {
       .catch((e) => setError(e.message));
   }
 
+  function demoLogin() {
+    signInWithEmailAndPassword(auth, "fake5@test.com", "123456")
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => console.log(error));
+  }
+
   function logOut() {
     signOut(auth);
     navigate("/login");
@@ -70,7 +78,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, signUp, login, logOut }}>
+    <AuthContext.Provider value={{ user, signUp, login, logOut, demoLogin }}>
       {children}
     </AuthContext.Provider>
   );

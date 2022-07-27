@@ -6,7 +6,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, demoLogin } = useAuth();
 
   const handleEmail = (e) => {
     setEmail(e.target.value);
@@ -93,6 +93,12 @@ const Login = () => {
               }
             >
               Log in
+            </button>
+            <button
+              className="px-2 py-3 bg-blue-600 text-white text-2xl font-bold rounded active:bg-blue-400"
+              onClick={() => demoLogin()}
+            >
+              Demo
             </button>
           </form>
         </div>
