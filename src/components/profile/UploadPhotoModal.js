@@ -15,24 +15,29 @@ const UploadPhotoModal = ({ toggleModal, setToggleModal, id, email }) => {
   };
 
   const handleSubmit = () => {
-    const imageRef = ref(storage, `${id}/image.png`);
-    uploadBytes(imageRef, image)
-      .then(() => {
-        getDownloadURL(imageRef)
-          .then((url) => {
-            updateDoc(doc(db, "users", email), {
-              userPhoto: url,
+    if (image) {
+      const imageRef = ref(storage, `${id}/image.png`);
+      uploadBytes(imageRef, image)
+        .then(() => {
+          getDownloadURL(imageRef)
+            .then((url) => {
+              updateDoc(doc(db, "users", email), {
+                userPhoto: url,
+              });
+              setConfirmation(true);
+              setTimeout(() => setConfirmation(false), 2000);
+              setImage(null);
+            })
+            .catch((error) => {
+              console.log(error.message);
             });
-            setConfirmation(true);
-            setTimeout(() => setConfirmation(false), 2000);
-          })
-          .catch((error) => {
-            console.log(error.message);
-          });
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      return;
+    }
   };
 
   const closeModal = (e) => {

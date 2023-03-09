@@ -14,7 +14,7 @@ const SmoothImage = ({ src }) => {
         loading="lazy"
       />
       {!imageLoaded && (
-        <div className="absolute top-0 left-0 max-w-[418px] max-h-[418px] bg-[#f5f5f5] z-50">
+        <div className="absolute top-0 left-0 w-full h-full bg-[#f5f5f5] z-50">
           <span className="loader"></span>
         </div>
       )}
